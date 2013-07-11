@@ -1,0 +1,41 @@
+  <div class="np" style="padding: 30px 10px 20px 60px">
+    <div style="font-size: 18px; padding: 0px 0px 20px 0px;">
+      Enter your New Password below:
+    </div>
+    <form action="{{ path('change_password', { 'email': user.email }) }}" method="post" id="password">
+      <table>
+        <tbody>
+          <tr>
+            <td class="label">
+              <label for="cmar_meetingbundle_passwordtype_password_first" class=" required">
+                New Password:
+              </label>
+            </td>
+            <td>
+              <input style="width:99%" type="password" id="cmar_meetingbundle_passwordtype_password_first" name="cmar_meetingbundle_passwordtype_first" required="required" />
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              <label for="cmar_meetingbundle_passwordtype_password_second" class=" required">
+                Re-enter Your New Password:
+              </label>
+            </td>
+            <td>
+              <input style="width:99%" type="password" id="cmar_meetingbundle_passwordtype_password_second" name="cmar_meetingbundle_passwordtype_second" required="required" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="error_password" style="color: #b30000; font-weight: bolder; ">Passwords do not match!</div>
+            </td>
+            <td style="text-align: right;">
+              <input style="margin: 10px;" class="button" type="submit" name="Cambiar" value="Change"/>
+              <a href="{{ path('index') }}" style="float: right; text-decoration: none; margin: 10px 5%;" id="cancel" class="button">Cancel</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </div>
+

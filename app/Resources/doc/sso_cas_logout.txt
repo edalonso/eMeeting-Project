@@ -1,0 +1,12 @@
+Para evitar que al hacer logout se muestre de nuevo un formulario de login que no va a ningun lado aplicar el siguiente parche:
+
+./vendor/bundles/Sensio/CasBundle/Service/Protocol/Protocol.php
+
+
+     public function getLogoutUri($service)
+     {
+         return $this->buildUri('logout', array(
+-            'service' => $this->cleanUri($service),
++            'url' => $this->cleanUri($service),
+         ));
+     }

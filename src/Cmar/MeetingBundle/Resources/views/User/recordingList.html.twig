@@ -1,0 +1,88 @@
+<div id="container {{ meeting.id }}" class="np" style="padding: 0px 20px; padding-bottom: 10px;">
+<br />
+    <div class="np" style="margin: 0px 0px 45px 25px; padding: 0px; background: none">
+      <label style="margin: 0px; font-size: 16px;">URL to recordings <a href="#" class="showr" title="URL to view the recordings of this meeting."><i class="icon-help icon-white"></i></a></label>
+      <input style="width: 280px" type="text" readonly="readonly" onclick="this.select()" value="{{ url('recording_public_list', {'secretsalt': meeting.secretsalt}) }}"/>
+    </div>
+    {% for recording in meeting.recordings %}
+      <ul>
+        <li style="font-weight: bolder; text-shadow: 0 1px 0 black; color: #FFFFFF;">
+	  {% if recording.state ==  0 %}
+  	    <a id="title_recording_public" class="title" href="{{ url('index_public_recording', {'secretsalt': recording.secretsalt }) }}" style="text-decoration: none; color: #0F8B1D;text-shadow: none;">{{ recording.title }}</a>
+	    <form class="edit_title_recording_form" data-id="{{ recording.id }}" data-title="{{ recording.title }}" style="display: none;">
+	      <input name="id_recording"  value="{{ recording.id }}" type="hidden">
+	      <input name="caja_recording" class="caja_recording" value="{{ recording.title }}" type="text" title="{{ recording.title }}">
+	      <button class="save_recording button" style="padding: 0px; width: 24px; height: 24px;" type="submit"><i class=" icon-enabled icon-black"></i></button>
+	      <button class="cancel_recording button" style="padding: 0px; width: 24px; height: 24px;"><i class="icon-disabled icon-black"></i></button>
+	    </form>
+	  {% elseif recording.state ==  2 %}
+	    <a id="title_recording_private" href="#" onclick="return false" style="color: #7F8080; text-shadow: none; text-decoration:none"> {{ recording.title }}</a>
+	  {% else %}
+  	    <a id="title_recording_closed" class="title" href="{{ url('index_public_recording', {'secretsalt': recording.secretsalt }) }}" style="text-decoration: none; color: #E94646; text-shadow: none;">{{ recording.title }}</a>
+	    <form class="edit_title_recording_form" data-id="{{ recording.id }}" data-title="{{ recording.title }}" style="display: none;">
+	      <input name="id_recording"  value="{{ recording.id }}" type="hidden">
+	      <input name="caja_recording" class="caja_recording" value="{{ recording.title }}" type="text" title="{{ recording.title }}">
+	      <button class="save_recording button" style="padding: 0px; width: 24px; height: 24px;" type="submit"><i class=" icon-enabled icon-black"></i></button>
+	      <button class="cancel_recording button" style="padding: 0px; width: 24px; height: 24px;"><i class="icon-disabled icon-black"></i></button>
+	    </form>
+	  {% endif %}
+	  <span style="font-size: 12px; font-style: italic; margin: 5px 0px 5px 10px; padding-bottom: 5px; text-shadow: none;"> at {{ recording.datecreated|date('Y-m-d H:i') }}</span>
+	  <button class="editar_title_recording" style="{% if user.id!=meeting.owner.id %}display: none;{% endif %}padding: 0px; width: 20px; height: 20px;"><i class="icon-edit icon-black"></i></button>
+           <div class="btn-group" data-toggle="buttons-radio" style="{% if user.id!=meeting.owner.id %}display: none; {% else %}display: inline-block; {% endif %}vertical-align: middle;">
+             <a href="#" class="btn{% if recording.state ==  0 %} active{% endif %}" style="font-size: 12px; font-weight: normal; height: 10px; line-height: 0.8; width: 35px; text-decoration: none; box-shadow: none;" {% if user.id == meeting.owner.id %} onclick="$('#dialog-modal-recordings-{{ meeting.id }}').load('{{ path('locked_recording', {'secretsalt': recording.secretsalt, 'locked': 1}) }}'); return false;" {% endif %}>Public</a>
+	     <a href="#" class="btn{% if recording.state ==  1 %} active{% endif %}" style="font-size: 12px; font-weight: normal; height: 10px; line-height: 0.8; width: 35px; text-decoration: none; box-shadow: none;"{% if user.id == meeting.owner.id %} onclick="$('#dialog-modal-recordings-{{ meeting.id }}').load('{{ path('locked_recording', {'secretsalt': recording.secretsalt, 'locked': 0}) }}'); return false;" {% endif %}>Private</a>
+	     <a  href="#" class="btn{% if recording.state ==  2 %} active{% endif %}" style="font-size: 12px; font-weight: normal; height: 10px; line-height: 0.8; width: 35px; text-decoration: none; box-shadow: none;" {% if user.id == meeting.owner.id %} onclick="$('#dialog-modal-recordings-{{ meeting.id }}').load('{{ path('locked_recording', {'secretsalt': recording.secretsalt, 'locked': 2}) }}'); return false;" {% endif %}>Closed</a>
+          </div>
+	  <div style="width: 100%">
+	    <input type="text" readonly="readonly" style="border: 1px solid #ccc; width: 52%; margin: 10px 0px 10px 10px;{% if (recording.state!=0 and user.id!=meeting.owner.id) %} display: none;{% endif %}" onclick="this.select()" value="{{ url('index_public_recording', {'secretsalt': recording.secretsalt }) }}" /><span style="margin-left: 5px;{% if (recording.state!=0 and user.id!=meeting.owner.id) %} display: none;{% endif %}">Access to this recording</span>
+	  </div>
+	</li>
+      </ul>
+    {% else %}
+      <center style="font-size: 25px; margin-bottom: 5px">No recordings at <br />"{{ meeting.title }}"</center>
+    {% endfor %}
+    <div style="margin-left: 75%; margin-bottom: 10px">
+      <a href="{{ path('index') }}" style="margin-top: 25px; font-size: 12px; text-decoration: none" class="button">Cancel</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+  function change()
+  {
+    document.getElementById(title_recording_private).style.color="#7F8080";
+    document.getElementById(title_recording_closed).style.color="#E94646";
+    document.getElementById(title_recording_public).style.color="#0F8B1D";
+  }
+</script>
+<script type="text/javascript">
+  $('.editar_title_recording').click( function(e){
+      var p = $(this).parent();
+      p.find('.title').hide();
+      p.find('.edit_title_recording_form').show();
+      p.find('.cancel_recording').show();
+  });
+
+  $('.cancel_recording').click( function(e){
+      var p = $(this).parent();
+      p.find('.title').show();
+      p.find('.edit_title_recording_form').hide();
+      p.find('.cancel_recording').hide();
+  });
+
+  $('.edit_title_recording_form').submit(function() {
+      var p = $(this).parent();
+      $.ajax({
+          type: 'POST',
+          url: "{{ url('safe_title_recording') }}",
+          data: $(this).serialize(),
+          // Mostramos un mensaje con la respuesta de PHP
+          success: function(data) {
+              p.find('.title').text(p.find('.caja_recording').val());
+              p.find('.title').show();
+              p.find('.edit_title_recording_form').hide();
+              p.find('.cancel_recording').hide();
+          }
+      })        
+      return false;
+   });
+</script>
